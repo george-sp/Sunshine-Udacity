@@ -78,4 +78,49 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+
+    /**
+     *  Lifecycle Methods
+     *  - onCreate
+     *  - onStart
+     *  - onResume
+     *  - onStop
+     *  - onPause
+     *  - onDestroy
+     */
+    @Override
+    protected void onStart() {
+        Log.e(TAG, "in onStart");
+        super.onStart();
+        // The activity is about to become visible.
+    }
+
+    @Override
+    protected void onResume() {
+        Log.e(TAG, "in onResume");
+        super.onResume();
+        // The activity has become visible (it is now "resumed").
+    }
+
+    @Override
+    protected void onPause() {
+        Log.e(TAG, "in onPause");
+        super.onPause();
+        // Another activity is taking focus (this activity is about to be "paused").
+    }
+
+    @Override
+    protected void onStop() {
+        Log.e(TAG, "in onStop");
+        super.onStop();
+        // The activity is no longer visible (it is now "stopped")
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.e(TAG, "in onDestroy");
+        super.onDestroy();
+        // The activity is about to be destroyed.
+    }
+
 }
