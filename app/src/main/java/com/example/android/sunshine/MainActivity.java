@@ -74,7 +74,7 @@ public class MainActivity extends ActionBarActivity {
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         } else {
-            Log.d(TAG, "Couldn't call " + location + ", no receiving apps installed!");
+            Log.e(TAG, "Couldn't call " + location + ", no receiving apps installed!");
         }
     }
 
@@ -90,35 +90,35 @@ public class MainActivity extends ActionBarActivity {
      */
     @Override
     protected void onStart() {
-        Log.e(TAG, "in onStart");
+        Log.i(TAG, "in onStart");
         super.onStart();
         // The activity is about to become visible.
     }
 
     @Override
     protected void onResume() {
-        Log.e(TAG, "in onResume");
+        Log.i(TAG, "in onResume");
         super.onResume();
         // The activity has become visible (it is now "resumed").
     }
 
     @Override
     protected void onPause() {
-        Log.e(TAG, "in onPause");
+        Log.i(TAG, "in onPause");
         super.onPause();
         // Another activity is taking focus (this activity is about to be "paused").
     }
 
     @Override
     protected void onStop() {
-        Log.e(TAG, "in onStop");
+        Log.i(TAG, "in onStop");
         super.onStop();
         // The activity is no longer visible (it is now "stopped")
     }
 
     @Override
     protected void onDestroy() {
-        Log.e(TAG, "in onDestroy");
+        Log.i(TAG, "in onDestroy");
         super.onDestroy();
         // The activity is about to be destroyed.
     }
