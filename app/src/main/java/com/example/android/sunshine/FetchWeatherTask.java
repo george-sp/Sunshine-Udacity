@@ -287,7 +287,12 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
             // add to database
             if ( cVVector.size() > 0 ) {
-                // Student: call bulkInsert to add the weatherEntries to the database here
+                /**
+                 *  Call bulkInsert to add the weatherEntries to the database here
+                 */
+                ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                cVVector.toArray(cvArray);
+                mContext.getContentResolver().bulkInsert(WeatherEntry.CONTENT_URI, cvArray);
             }
 
             // Sort order:  Ascending, by date.
@@ -295,8 +300,9 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             Uri weatherForLocationUri = WeatherEntry.buildWeatherLocationWithStartDate(
                     locationSetting, System.currentTimeMillis());
 
-            // Students: Uncomment the next lines to display what what you stored in the bulkInsert
-
+            /**
+             *  The next lines display what what you stored in the bulkInsert
+             */
             Cursor cur = mContext.getContentResolver().query(weatherForLocationUri,
                     null, null, null, sortOrder);
 

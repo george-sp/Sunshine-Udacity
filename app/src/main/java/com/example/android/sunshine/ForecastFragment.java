@@ -97,13 +97,14 @@ public class ForecastFragment extends Fragment {
     }
 
     private void updateWeather(){
+        // Execute the AsyncTask
+        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity(), mForecastAdapter);
+
         // Use user's location preference when fetching weather data from server
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = prefs.getString(getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default));
 
-        // Execute the AsyncTask
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity(), mForecastAdapter);
         weatherTask.execute(location);
     }
 

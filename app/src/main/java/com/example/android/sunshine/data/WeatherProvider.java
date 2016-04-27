@@ -292,7 +292,7 @@ public class WeatherProvider extends ContentProvider {
             case LOCATION:
                 rowsUpdated = db.update(WeatherContract.LocationEntry.TABLE_NAME, values, selection,
                         selectionArgs);
-     `           break;
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
