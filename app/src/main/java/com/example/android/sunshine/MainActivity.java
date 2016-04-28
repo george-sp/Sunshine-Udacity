@@ -11,15 +11,19 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
     //LOG_TAG
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String FORECASTFRAGMENT_TAG = "FFTAG";
+
+    private String mLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mLocation = Utility.getPreferredLocation(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
         }
     }
@@ -68,10 +72,9 @@ public class MainActivity extends ActionBarActivity {
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         } else {
-            Log.e(TAG, "Couldn't call " + location + ", no receiving apps installed!");
+            Log.e(LOG_TAG, "Couldn't call " + location + ", no receiving apps installed!");
         }
     }
-
 
     /**
      *  Lifecycle Methods
@@ -84,35 +87,43 @@ public class MainActivity extends ActionBarActivity {
      */
     @Override
     protected void onStart() {
-        Log.i(TAG, "in onStart");
+        Log.i(LOG_TAG, "in onStart");
         super.onStart();
         // The activity is about to become visible.
     }
 
     @Override
     protected void onResume() {
-        Log.i(TAG, "in onResume");
+        Log.i(LOG_TAG, "in onResume");
         super.onResume();
-        // The activity has become visible (it is now "resumed").
+        String location = Utility.getPreferredLocation(this);
+        // Update the location in our second pane using the  fragment manager
+        if (location != null && !location.equals(mLocation)) {
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            if (null != ff) {
+                ff.onLocationChanged();
+            }
+            mLocation = location;
+        }
     }
 
     @Override
     protected void onPause() {
-        Log.i(TAG, "in onPause");
+        Log.i(LOG_TAG, "in onPause");
         super.onPause();
         // Another activity is taking focus (this activity is about to be "paused").
     }
 
     @Override
     protected void onStop() {
-        Log.i(TAG, "in onStop");
+        Log.i(LOG_TAG, "in onStop");
         super.onStop();
         // The activity is no longer visible (it is now "stopped")
     }
 
     @Override
     protected void onDestroy() {
-        Log.i(TAG, "in onDestroy");
+        Log.i(LOG_TAG, "in onDestroy");
         super.onDestroy();
         // The activity is about to be destroyed.
     }
