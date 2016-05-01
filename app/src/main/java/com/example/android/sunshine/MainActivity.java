@@ -10,21 +10,33 @@ import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
 
-    //LOG_TAG
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
-    private static final String FORECASTFRAGMENT_TAG = "FFTAG";
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
+    private boolean mTwoPane;
     private String mLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mLocation = Utility.getPreferredLocation(this);
         super.onCreate(savedInstanceState);
+        mLocation = Utility.getPreferredLocation(this);
+
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
-                    .commit();
+        if (findViewById(R.id.weather_detail_container) != null) {
+            // The detail container view will be present only in the large-screen layouts
+            // (res/layout-sw600dp). If this view is present, then the activity should be
+            // in two-pane mode.
+            mTwoPane = true;
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
         }
     }
 
@@ -41,9 +53,9 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        
+
+        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            // Launch the Settings Activity
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
@@ -52,7 +64,6 @@ public class MainActivity extends ActionBarActivity {
             openPreferredLocationInMap();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -72,60 +83,22 @@ public class MainActivity extends ActionBarActivity {
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         } else {
-            Log.e(LOG_TAG, "Couldn't call " + location + ", no receiving apps installed!");
+            Log.d(LOG_TAG, "Couldn't call " + location + ", no receiving apps installed!");
         }
-    }
-
-    /**
-     *  Lifecycle Methods
-     *  - onCreate
-     *  - onStart
-     *  - onResume
-     *  - onStop
-     *  - onPause
-     *  - onDestroy
-     */
-    @Override
-    protected void onStart() {
-        Log.i(LOG_TAG, "in onStart");
-        super.onStart();
-        // The activity is about to become visible.
     }
 
     @Override
     protected void onResume() {
-        Log.i(LOG_TAG, "in onResume");
         super.onResume();
-        String location = Utility.getPreferredLocation(this);
-        // Update the location in our second pane using the  fragment manager
+        String location = Utility.getPreferredLocation( this );
+        // update the location in our second pane using the fragment manager
         if (location != null && !location.equals(mLocation)) {
-            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
-            if (null != ff) {
+            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+            if ( null != ff ) {
                 ff.onLocationChanged();
             }
             mLocation = location;
         }
-    }
-
-    @Override
-    protected void onPause() {
-        Log.i(LOG_TAG, "in onPause");
-        super.onPause();
-        // Another activity is taking focus (this activity is about to be "paused").
-    }
-
-    @Override
-    protected void onStop() {
-        Log.i(LOG_TAG, "in onStop");
-        super.onStop();
-        // The activity is no longer visible (it is now "stopped")
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.i(LOG_TAG, "in onDestroy");
-        super.onDestroy();
-        // The activity is about to be destroyed.
     }
 
 }
