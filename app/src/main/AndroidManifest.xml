@@ -42,7 +42,10 @@
             android:name=".data.WeatherProvider"
             android:authorities="com.example.android.sunshine" />
 
-        <service android:name=".service.SunshineService"/>
+        <service android:name=".service.SunshineService" />
+        <receiver
+            android:name=".service.SunshineService$AlarmReceiver"
+            android:enabled="true" />
     </application>
 
 </manifest>
