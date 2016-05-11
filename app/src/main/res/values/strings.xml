@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
 
     <!--
@@ -75,5 +76,9 @@
 
     <!-- Humidity format CHAR LIMIT=25]-->
     <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
+
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">sunshine.example.com</string>
+    <string name="content_authority">com.example.android.sunshine.app</string>
 
 </resources>
