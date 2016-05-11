@@ -79,6 +79,6 @@
 
     <!-- SyncAdapter related -->
     <string name="sync_account_type">sunshine.example.com</string>
-    <string name="content_authority">com.example.android.sunshine.app</string>
+    <string name="content_authority">com.example.android.sunshine</string>
 
 </resources>
