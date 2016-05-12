@@ -34,6 +34,7 @@ import com.example.android.sunshine.data.WeatherContract.WeatherEntry;
  * A placeholder fragment containing a simple view.
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
     public static final String DETAIL_URI = "URI";
 
@@ -92,7 +93,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Bundle arguments = getArguments();
-        if (arguments != null){
+        if (arguments != null) {
             mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
         }
 
@@ -140,10 +141,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         super.onActivityCreated(savedInstanceState);
     }
 
-    void onLocationChanged(String newLocation){
+    void onLocationChanged(String newLocation) {
         // replace the Uri, since the location has changed
         Uri uri = mUri;
-        if (null != uri){
+        if (null != uri) {
             long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
             Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
             mUri = updatedUri;
@@ -155,7 +156,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.v(LOG_TAG, "In onCreateLoader");
 
-        if (null != mUri){
+        if (null != mUri) {
             // Now create and return a CursorLoader that will take care of
             // creating a Cursor for the data being displayed.
             return new CursorLoader(
@@ -196,12 +197,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             boolean isMetric = Utility.isMetric(getActivity());
 
             double high = data.getDouble(COL_WEATHER_MAX_TEMP);
-            String highString = Utility.formatTemperature(getActivity(), high, isMetric);
+            String highString = Utility.formatTemperature(getActivity(), high);
             mHighTempView.setText(highString);
 
             // Read low temperature from cursor and update view
             double low = data.getDouble(COL_WEATHER_MIN_TEMP);
-            String lowString = Utility.formatTemperature(getActivity(), low, isMetric);
+            String lowString = Utility.formatTemperature(getActivity(), low);
             mLowTempView.setText(lowString);
 
             // Read humidity from cursor and update view
@@ -228,5 +229,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) { }
+    public void onLoaderReset(Loader<Cursor> loader) {
+    }
 }
