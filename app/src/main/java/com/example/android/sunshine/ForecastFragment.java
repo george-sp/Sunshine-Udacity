@@ -1,5 +1,6 @@
 package com.example.android.sunshine;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,7 +27,10 @@ import com.example.android.sunshine.sync.SunshineSyncAdapter;
  */
 
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+
     private ForecastAdapter mForecastAdapter;
+
+    public static final String LOG_TAG = ForecastFragment.class.getSimpleName();
 
     private ListView mListView;
     private int mPosition = ListView.INVALID_POSITION;
@@ -72,6 +77,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
      * selections.
      */
     public interface Callback {
+
         /**
          * DetailFragmentCallback for when an item has been selected.
          */
@@ -99,10 +105,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            updateWeather();
+
+//        if (id == R.id.action_refresh) {
+//            updateWeather();
+//            return true;
+//        }
+
+        if (id == R.id.action_map) {
+            openPreferredLocationInMap();
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -168,6 +181,33 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private void updateWeather() {
         SunshineSyncAdapter.syncImmediately(getActivity());
+    }
+
+    private void openPreferredLocationInMap() {
+        // Using the URI scheme for showing a location found on a map.
+        // This super-handy intent can is detailed in the "Common Intents" page of Android's developer site:
+        // http://developer.android.com/guide/components/intents-common.html#Maps
+        if (null != mForecastAdapter) {
+            Cursor c = mForecastAdapter.getCursor();
+            if (null != c) {
+                c.moveToPosition(0);
+                String posLat = c.getString(COL_COORD_LAT);
+                String posLng = c.getString(COL_COORD_LNG);
+                Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
+                        .appendQueryParameter("q", posLat + "," + posLng)
+                        .build();
+                Log.e(LOG_TAG, posLat + "," + posLng);
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(geoLocation);
+
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Log.d(LOG_TAG, "Couldn't call" + geoLocation.toString() + ", no receiving apps installed!");
+                }
+            }
+        }
     }
 
     @Override
