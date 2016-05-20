@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -18,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.android.sunshine.data.WeatherContract;
 import com.example.android.sunshine.sync.SunshineSyncAdapter;
@@ -254,14 +254,37 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             // If we don't need to restart the loader, and there's a desired position to restore
             // to, do so now.
             mListView.smoothScrollToPosition(mPosition);
-        } else if (MainActivity.mTwoPane) {
-            {
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mListView.performItemClick(mListView, 0, mListView.getAdapter().getItemId(0));
-                    }
-                });
+        }
+
+        updateEmptyView();
+//        else if (MainActivity.mTwoPane) {
+//            {
+//                new Handler().post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mListView.performItemClick(mListView, 0, mListView.getAdapter().getItemId(0));
+//                    }
+//                });
+//            }
+//        }
+    }
+
+    /**
+     * Helper Method
+     *
+     * Updates the empty list view with contextually relevant information
+     * that the user can use to determine why he isn't seeing weather.
+     */
+    private void updateEmptyView() {
+        if (mForecastAdapter.getCount() == 0) {
+            TextView textView = (TextView) getView().findViewById(R.id.listview_forecast_empty);
+            if (textView != null) {
+                // If cursor is empty, why do we have an invalid location.
+                int message = R.string.empty_forecast_list;
+                if (!Utility.isNetworkAvailable(getActivity())) {
+                    message = R.string.empty_forecast_list_no_network;
+                }
+                textView.setText(message);
             }
         }
     }
