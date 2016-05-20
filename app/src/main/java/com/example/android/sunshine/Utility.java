@@ -7,6 +7,8 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 
+import com.example.android.sunshine.sync.SunshineSyncAdapter;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -229,7 +231,7 @@ public class Utility {
     }
 
     /**
-     * @param context Context used to get the ConnectivityManager
+     * @param context context used to get the ConnectivityManager
      * @return true if the network is available or about to become available
      */
     public static boolean isNetworkAvailable(Context context) {
@@ -237,5 +239,17 @@ public class Utility {
 
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    /**
+     * @param context context used to get the SharedPreferences
+     * @return the location status integer type
+     */
+    @SuppressWarnings("ResourceType")
+    public static
+    @SunshineSyncAdapter.LocationSatus
+    int getLocationStatus(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getInt(context.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
     }
 }
