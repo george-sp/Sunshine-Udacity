@@ -81,7 +81,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UNKNOWN})
-    public @interface LocationSatus {}
+    public @interface LocationSatus {
+
+    }
 
     public static final int LOCATION_STATUS_OK = 0;
     public static final int LOCATION_STATUS_SERVER_DOWN = 1;
@@ -323,7 +325,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 // delete old data so we don't build up an endless history
                 getContext().getContentResolver().delete(WeatherContract.WeatherEntry.CONTENT_URI,
                         WeatherContract.WeatherEntry.COLUMN_DATE + " <= ?",
-                        new String[] {Long.toString(dayTime.setJulianDay(julianStartDay-1))});
+                        new String[]{Long.toString(dayTime.setJulianDay(julianStartDay - 1))});
 
                 notifyWeather();
             }
@@ -566,13 +568,13 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
      * This function should not be called from the UI thread
      * because it uses commit to write the shared preferences.
      *
-     * @param context context to get the PreferenceManager from
+     * @param context        context to get the PreferenceManager from
      * @param locationStatus the IntDef value to set
      */
     private static void setLocationStatus(Context context, @LocationSatus int locationStatus) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        sharedPreferencesEditor.putInt(context.getString(R.string.pref_location_status_key));
+        sharedPreferencesEditor.putInt(context.getString(R.string.pref_location_status_key), locationStatus);
         sharedPreferencesEditor.commit();
     }
 }
