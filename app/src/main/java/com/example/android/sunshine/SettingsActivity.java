@@ -2,6 +2,7 @@ package com.example.android.sunshine;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -9,16 +10,19 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+import com.example.android.sunshine.data.WeatherContract;
+import com.example.android.sunshine.sync.SunshineSyncAdapter;
+
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
- * <p>
+ * <p/>
  * See <a href="http://developer.android.com/design/patterns/settings.html">
  * Android Design: Settings</a> for design guidelines and the <a
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends PreferenceActivity
-        implements Preference.OnPreferenceChangeListener {
+        implements Preference.OnPreferenceChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,22 @@ public class SettingsActivity extends PreferenceActivity
         // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Registers a shared preference change listener that gets notified when preferences change.
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        sp.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Unregisters a shared preference change listener.
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        sp.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     /**
@@ -49,8 +69,26 @@ public class SettingsActivity extends PreferenceActivity
                         .getString(preference.getKey(), ""));
     }
 
+    /**
+     * This get called before the preference is changed
+     *
+     * @param preference
+     * @param value
+     * @return
+     */
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
+        setPreferenceSummary(preference, value);
+        return true;
+    }
+
+    /**
+     * Helper Method
+     *
+     * @param preference
+     * @param value
+     */
+    private void setPreferenceSummary(Preference preference, Object value) {
         String stringValue = value.toString();
 
         if (preference instanceof ListPreference) {
@@ -65,13 +103,28 @@ public class SettingsActivity extends PreferenceActivity
             // For other preferences, set the summary to the value's simple string representation.
             preference.setSummary(stringValue);
         }
-        return true;
+    }
+
+    /**
+     * This get called after the preference is changed.
+     * (which is important because we start our synchronization here)
+     *
+     * @param sharedPreferences
+     * @param key
+     */
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_location_key))) {
+            SunshineSyncAdapter.syncImmediately(this);
+        } else if (key.equals(getString(R.string.pref_units_key))) {
+            // Units have changed. update lists of weather entries accordingly
+            getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    public Intent getParentActivityIntent(){
+    public Intent getParentActivityIntent() {
         return super.getParentActivityIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     }
-
 }
