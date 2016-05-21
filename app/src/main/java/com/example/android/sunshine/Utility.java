@@ -15,6 +15,8 @@ import java.util.Date;
 
 public class Utility {
 
+    private static final String LOG_TAG = Utility.class.getSimpleName();
+
     public static String getPreferredLocation(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(context.getString(R.string.pref_location_key),
@@ -251,5 +253,18 @@ public class Utility {
     int getLocationStatus(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getInt(context.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+    }
+
+    /**
+     * Resets the location status.
+     * (Set it to SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN)
+     *
+     * @param context context used to get the SharedPreferences
+     */
+    public static void resetLocationStatus(Context context) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+        sharedPreferencesEditor.putInt(context.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+        sharedPreferencesEditor.apply();
     }
 }

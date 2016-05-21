@@ -287,7 +287,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     /**
      * Helper Method
-     *
+     * <p/>
      * Updates the empty list view with contextually relevant information
      * that the user can use to determine why he isn't seeing weather.
      */
@@ -298,12 +298,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 // If cursor is empty, why do we have an invalid location.
                 int message = R.string.empty_forecast_list;
                 @SunshineSyncAdapter.LocationSatus int location = Utility.getLocationStatus(getActivity());
-                switch (location){
+                switch (location) {
                     case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
                         message = R.string.empty_forecast_list_server_down;
                         break;
                     case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
                         message = R.string.empty_forecast_list_server_error;
+                        break;
+                    case SunshineSyncAdapter.LOCATION_STATUS_INVALID:
+                        message = R.string.empty_forecast_list_invalid_location;
                         break;
                     default:
                         if (!Utility.isNetworkAvailable(getActivity())) {
