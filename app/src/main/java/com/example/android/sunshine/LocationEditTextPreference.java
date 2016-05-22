@@ -1,9 +1,16 @@
 package com.example.android.sunshine;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.widget.Button;
+import android.widget.EditText;
 
 /**
  * @author George Spiridakis <george@codeburrow.com>
@@ -34,4 +41,38 @@ public class LocationEditTextPreference extends EditTextPreference {
         }
     }
 
+    @Override
+    protected void showDialog(Bundle state) {
+        super.showDialog(state);
+
+        EditText editText = getEditText();
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Dialog dialog = getDialog();
+                if (dialog instanceof AlertDialog) {
+                    AlertDialog alertDialog = (AlertDialog) dialog;
+                    Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    // Check if the EditText is empty.
+                    if (s.length() < mMinLength){
+                        // Disable OK button.
+                        positiveButton.setEnabled(false);
+                    } else {
+                        // Re-enable the button.
+                        positiveButton.setEnabled(true);
+                    }
+                }
+            }
+        });
+    }
 }
