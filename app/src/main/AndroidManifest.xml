@@ -95,15 +95,15 @@
                 <action android:name="com.example.android.sunshine"/>
             </intent-filter>
         </receiver>
+        <!--<service-->
+            <!--android:name="gcm.MyGcmListenerService"-->
+            <!--android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.android.c2dm.intent.RECEIVER"/>-->
+            <!--</intent-filter>-->
+        <!--</service>-->
         <service
-            android:name="gcm.MyGcmListenerService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVER"/>
-            </intent-filter>
-        </service>
-        <service
-            android:name="gcm.MyInstanceIDListenerService"
+            android:name=".gcm.MyInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID"/>
