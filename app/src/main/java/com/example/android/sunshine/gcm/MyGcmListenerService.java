@@ -53,10 +53,10 @@ public class MyGcmListenerService extends GcmListenerService {
                 // Process message and then post a notification of the received message.
                 String weather = data.getString(EXTRA_WEATHER);
                 String location = data.getString(EXTRA_LOCATION);
-                String alert = String.format(getString(R.string.gcm_defaultSenderId), weather, location);
+                String alert = String.format(getString(R.string.gcm_weather_alert), weather, location);
                 sendNotification(alert);
             }
-            Log.i(LOG_TAG, "Received: " + data.toString());
+            Log.e(LOG_TAG, "Received: " + data.toString());
         }
     }
 
