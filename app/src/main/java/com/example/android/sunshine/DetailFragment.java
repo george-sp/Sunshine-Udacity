@@ -16,6 +16,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -173,14 +175,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     null
             );
         }
-        getView().setVisibility(View.INVISIBLE);
+        ViewParent viewParent = getView().getParent();
+        if (viewParent instanceof CardView) {
+            ((View) viewParent).setVisibility(View.INVISIBLE);
+        }
         return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()) {
-            getView().setVisibility(View.VISIBLE);
+            ViewParent viewParent = getView().getParent();
+            if (viewParent instanceof CardView) {
+                ((View) viewParent).setVisibility(View.VISIBLE);
+            }
 
             // Read weather condition ID from cursor
             int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
@@ -255,7 +263,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         Toolbar toolbarView = (Toolbar) getView().findViewById(R.id.toolbar);
 
         // We need to start the enter transition after the data has loaded.
-        if (activity instanceof DetailActivity){
+        if (activity instanceof DetailActivity) {
             activity.supportStartPostponedEnterTransition();
 
             if (null != toolbarView) {
@@ -265,7 +273,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
         } else {
-            if ( null != toolbarView){
+            if (null != toolbarView) {
                 Menu menu = toolbarView.getMenu();
                 if (null != menu) menu.clear();
                 toolbarView.inflateMenu(R.menu.detailfragment);
