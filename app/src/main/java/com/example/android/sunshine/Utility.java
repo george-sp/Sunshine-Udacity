@@ -17,6 +17,25 @@ import java.util.Locale;
 public class Utility {
 
     private static final String LOG_TAG = Utility.class.getSimpleName();
+    // We'll default our latlong to 0. Yay, "Earth!"
+    public static float DEFAULT_LATLNG = 0F;
+
+    public static boolean isLocationLatLonAvailable(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.contains(context.getString(R.string.pref_location_latitude))
+                && prefs.contains(context.getString(R.string.pref_location_longitude));
+    }
+
+    public static float getLocationLatitude(Context context) {
+        SharedPreferences prefs
+                = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getFloat(context.getString(R.string.pref_location_latitude), DEFAULT_LATLNG);
+    }
+
+    public static float getLocationLongitude(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getFloat(context.getString(R.string.pref_location_longitude), DEFAULT_LATLNG);
+    }
 
     public static String getPreferredLocation(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -87,7 +106,7 @@ public class Utility {
      * to display to users.
      * As classy and polished a user experience as "20140102" is, we can do better.
      *
-     * @param context Context to use for resource localization.
+     * @param context      Context to use for resource localization.
      * @param dateInMillis The date in milliseconds.
      * @return A user-friendly representation of the date.
      */
