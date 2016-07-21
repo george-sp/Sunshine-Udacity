@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.android.sunshine.data.WeatherContract;
 import com.example.android.sunshine.gcm.RegistrationIntentService;
 import com.example.android.sunshine.sync.SunshineSyncAdapter;
 import com.google.android.gms.common.ConnectionResult;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mLocation = Utility.getPreferredLocation(this);
+        Uri contentUri = getIntent() != null ? getIntent().getData() : null;
 
         setContentView(R.layout.activity_main);
 
@@ -50,8 +52,14 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             // adding or replacing the detail fragment using a
             // fragment transaction.
             if (savedInstanceState == null) {
+                DetailFragment fragment = new DetailFragment();
+                if (contentUri != null) {
+                    Bundle args = new Bundle();
+                    args.putParcelable(DetailFragment.DETAIL_URI, contentUri);
+                    fragment.setArguments(args);
+                }
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+                        .replace(R.id.weather_detail_container, fragment, DETAILFRAGMENT_TAG)
                         .commit();
             }
         } else {
@@ -62,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
         ForecastFragment forecastFragment = ((ForecastFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast));
         forecastFragment.setUseTodayLayout(!mTwoPane);
+        if (contentUri != null) {
+            forecastFragment.setInitialSelectedDate(WeatherContract.WeatherEntry.getDateFromUri(contentUri));
+        }
 
         SunshineSyncAdapter.initializeSyncAdapter(this);
 
@@ -70,14 +81,14 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
         // and this device will not receive any downstream messages from our fake server
         // Because weather alerts are not a core feature of the app,
         // this should not affect the behaviour of the app, from a user perspective.
-        if (checkPlayServices()){
+        if (checkPlayServices()) {
             // Because this is the initial creation of the app,
             // we'll want to be certain we have a token.
             // If we do not, then we will start the IntentService that will register this
             // application with GCM.
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             boolean sentToken = sharedPreferences.getBoolean(SENT_TOKEN_TO_SERVER, false);
-            if (!sentToken){
+            if (!sentToken) {
                 Intent intent = new Intent(this, RegistrationIntentService.class);
                 startService(intent);
             }

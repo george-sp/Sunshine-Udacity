@@ -78,7 +78,7 @@ public class Utility {
      * @param dateInMillis The date in milliseconds
      * @return a user-friendly representation of the date.
      */
-    public static String getFriendlyDayString(Context context, long dateInMillis) {
+    public static String getFriendlyDayString(Context context, long dateInMillis, boolean displayLongToday) {
         // The day string for forecast uses the following logic:
         // For today: "Today"
         // For tomorrow:  "Tomorrow"
@@ -91,7 +91,7 @@ public class Utility {
         int julianDay = Time.getJulianDay(dateInMillis, time.gmtoff);
         int currentJulianDay = Time.getJulianDay(currentTime, time.gmtoff);
 
-        if (julianDay == currentJulianDay || julianDay < currentJulianDay + 7) {
+        if ((displayLongToday & julianDay == currentJulianDay) || julianDay < currentJulianDay + 7) {
             // If the date is today's date or the input date is less than a week in the future, just return the day name.
             return getDayName(context, dateInMillis);
         } else {
